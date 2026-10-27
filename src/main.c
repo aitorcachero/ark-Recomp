@@ -43,6 +43,7 @@ static void TerranigmaBeginFrame(unsigned number)
 {
     (void)number;
     if (!g_ppu) return;
+    PpuSetPal(g_ppu, true);
     if (!g_config.widescreen) {
         PpuSetExtraSpace(g_ppu, 0);
         return;
