@@ -2,32 +2,15 @@
  * Terranigma — desktop host shim.
  *
  * Identity and hooks, nothing else. The host itself is the framework's
- * (snesrecomp/runner/src/desktop/host_main.h): the pre-boot launcher, ROM
- * resolution and digest checks, config.ini and keybinds.ini, the window and
- * the SDL / OpenGL presenters, audio, gamepads, the in-game save-state
- * browser and rewind filmstrip, the OSD, the pacing clock, crash handlers and
- * the post-mortem report, mod packages, Generate & rebuild, and the netplay
- * barrier when the project is built with it. A fix there reaches this
- * project on a submodule pull; nothing in this file needs to change for it.
- *
- * This file used to BE the host -- a ~700-line copy made at scaffold time --
- * so every project scaffolded before a fix kept the bug. Two ports of the
- * same game, a week apart, had different hosts.
- *
- * Nothing here ever ships a ROM. The player supplies one; the host makes
- * that easy (launcher, then positional argument, then a copy beside the
- * executable, then the rom.cfg cache, then a file picker) and checks what it
- * is handed against the digests in rom_identity.txt.
- *
- * Grow this file only with what is specific to THIS title: a custom
- * presenter (prepare_frame / draw_frame), an SPC player, a pacing rule
- * (keep_pacing_debt), a Mods provider. See SnesDesktopHostGame for the
- * complete list of hooks and what each is for.
+ * (snesrecomp/runner/src/desktop/host_main.h).
  */
 
 #include "host_main.h"
 #include "game_rtl.h"
 #include "snesrecomp_rom_identity.h"  /* generated from rom_identity.txt */
+#include "desktop/config.h"
+#include "snes/ppu.h"
+#include "widescreen.h"
 
 #ifndef __ANDROID__
 #define SDL_MAIN_HANDLED 1
@@ -41,6 +24,44 @@
 #ifndef SNES_GAME_VERSION
 #define SNES_GAME_VERSION "dev"
 #endif
+
+extern Ppu *g_ppu;
+extern uint8 g_ram[0x20000];
+
+static void TerranigmaPrepareFrame(int dw, int dh, int *w, int *h)
+{
+    (void)dw; (void)dh;
+    if (g_config.widescreen) {
+        *w = 384; /* 16:9 widescreen canvas: 256 + 2 * 64 */
+    } else {
+        *w = 256;
+    }
+    *h = 224;
+}
+
+static void TerranigmaBeginFrame(unsigned number)
+{
+    (void)number;
+    if (!g_ppu) return;
+    if (!g_config.widescreen) {
+        PpuSetExtraSpace(g_ppu, 0);
+        return;
+    }
+
+    /* Mode 5 and 6 are high-resolution screens (menus/dialogue/name-entry).
+     * Mode 7 is the iconic Terranigma world map. */
+    if (PPU_mode(g_ppu) == 5 || PPU_mode(g_ppu) == 6) {
+        PpuSetExtraSideSpace(g_ppu, 0, 0, 0);
+        return;
+    }
+
+    if (PPU_mode(g_ppu) == 7) {
+        PpuSetExtraSpace(g_ppu, 64);
+        return;
+    }
+
+    PpuSetExtraSpace(g_ppu, 64);
+}
 
 static const SnesDesktopHostGame kGameHost = {
     .display_name        = "Terranigma",
@@ -56,6 +77,12 @@ static const SnesDesktopHostGame kGameHost = {
     /* Battery-backed SRAM shows the launcher's SAVES panel. Leave NULL for a
      * title without one. The path is exe-relative. */
     .sram_path           = "saves/save.srm",
+    .widescreen_supported = 1,
+    .native_widescreen   = 1,
+    .display_aspect_supported = 1,
+    .shader_supported    = 1,
+    .prepare_frame       = TerranigmaPrepareFrame,
+    .begin_sim_frame     = TerranigmaBeginFrame,
 };
 
 #ifndef __ANDROID__
