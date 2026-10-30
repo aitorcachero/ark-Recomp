@@ -6,5 +6,5 @@ if not exist "TerranigmaSNESRecomp.exe" (
     exit /b 1
 )
 copy /y config_hack169.ini config.ini >nul 2>&1
-start "" "TerranigmaSNESRecomp.exe" --config config_hack169.ini --no-launcher
+start "" "TerranigmaSNESRecomp.exe" --config config_hack169.ini --launcher
 exit /b

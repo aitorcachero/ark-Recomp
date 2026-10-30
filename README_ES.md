@@ -44,11 +44,11 @@ Port nativo para Windows 64-bit de la obra maestra de Super Nintendo **Terranigm
 
 1. Coloca tu archivo `Terranigma (ESP).sfc` en la carpeta raíz del proyecto o junto al ejecutable.
 2. Inicia el juego con el perfil que prefieras:
-   * **`JUGAR_16_9.bat`**: Pantalla completa 16:9 panorámica, cero pop-in, texturas precargadas y shader HD-2D activado.
-   * **`JUGAR_SIN_VENTANAS.vbs`**: Ejecución directa silenciosa sin que parpadee la consola de comandos CMD.
+   * **`JUGAR.bat`** o **`LAUNCHER.bat`**: Menú gráfico de inicio (recomp-ui) para seleccionar y configurar mandos, resolución, aspecto de video, shaders y pulsar JUGAR.
+   * **`JUGAR_16_9.bat`**: Abre la pantalla de configuración con perfil panorámico 16:9 y shader HD-2D preestablecido.
+   * **`JUGAR_SIN_VENTANAS.vbs`**: Ejecución directa silenciosa sin consola de comandos CMD.
    * **`JUGAR_4_3.bat`**: Modo clásico original 4:3 pixel-perfect con barras laterales.
-   * **`JUGAR_HACK_16_9.bat`**: Modo hack con campo de visión (FOV) extendido.
-   * **`LAUNCHER.bat`**: Menú gráfico de configuración para personalizar resolución, mandos, audio y shaders.
+   * **`JUGAR_HACK_16_9.bat`**: Modo panorámico con campo de visión (FOV) extendido.
 
 ---
 
