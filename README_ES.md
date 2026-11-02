@@ -7,18 +7,17 @@ Port nativo para Windows 64-bit de la obra maestra de Super Nintendo **Terranigm
 ## 🌟 Características Principales
 
 * **🖥️ Resolución Nativa 1080p y 4K UHD:** Nitidez absoluta para pantallas modernas sin filtros de reescalado borrosos.
-* **📺 Modo 16:9 Pantalla Completa (Cero Pop-in):** Arquitectura de presentación que garantiza la precarga del 100% de los mapas, tiles y escenarios en memoria (estilo *Alundra Recompiled*), evitando que los bloques de textura aparezcan de golpe en los laterales.
-* **🎨 Filtros y Anti-Aliasing de Última Generación:**
-  * **HD-2D Remaster (activado por defecto):** Suavizado subpíxel de bordes, micro-contraste en contornos y expansión de la paleta original de 15 bits a color dinámico de 24 bits (estilo remakes modernos de Square Enix como *Live A Live* y *Octopath Traveler*).
-  * **xBR-lv2 Anti-Aliasing:** Algoritmo avanzado de vectorización que redondea los dientes de sierra de los sprites y fondos sin difuminar la imagen.
-  * **FXAA Retro:** Anti-aliasing rápido direccional para bordes suaves.
-  * **Smooth Bicúbico:** Suavizado de texturas mediante curvas Catmull-Rom.
-  * **CRT Soft y Warm Composite:** Simulación de líneas de escaneado y calidez de televisión clásica de tubo.
-  * **Sharp HD:** Escalado píxel-perfect de máxima definición.
-* **🎮 Compatibilidad Total con Mandos:** Detección automática plug & play de mandos de Xbox Series/One/360, PlayStation (DualShock 4 / DualSense), Nintendo Switch Pro y controladores genéricos SDL3.
+* **📺 Selector de Modos de Pantalla Integrado en el Launcher:**
+  * **4:3 (Original Clásico):** Proporciones originales idénticas a la consola con bandas laterales limpias en monitores panorámicos.
+  * **16:9 Panorámico (Hack FOV):** Campo de visión ampliado nativo (384x224) con gestión dinámica de bordes para evitar la repetición de tiles en habitaciones y menús.
+  * **16:9 Pantalla Completa (Estirado):** Adaptación completa al ancho de la pantalla sin franjas negras.
+* **🎨 Colores Vivos y Shaders Auténticos:**
+  * **Sharp HD (por defecto):** Máxima fidelidad cromática, píxeles nítidos y colores 100% auténticos de la paleta original de Super Nintendo (sin tonos descoloridos ni apagados).
+  * **Shaders opcionales:** CRT Soft, Warm Composite, xBR-lv2 Anti-Aliasing, FXAA, Bicúbico y HD-2D seleccionables con un clic.
+* **🔊 Audio Quintet Perfeccionado:** Sincronismo exacto con el chip S-DSP y buffer de 2048 muestras a 48000 Hz, garantizando música y efectos cristalinos sin cortes ni petardeo.
+* **🎮 Compatibilidad Total con Mandos:** Detección automática plug & play de mandos de Xbox Series/One/360, PlayStation (DualShock 4 / DualSense), Nintendo Switch Pro y controladores genéricos SDL3, con asignación y calibración visual.
 * **⏪ Rebobinado en Tiempo Real y Guardado Rápido:** Vuelve atrás hasta 60 segundos con **F12** y utiliza 10 ranuras de guardado y carga rápida inmediatas (**F1** a **F10**).
-* **🌍 Modo 7 Mejorado:** Renderizado en alta resolución y gran fluidez para el mapa del supramundo y el inframundo.
-* **⚡ 60 FPS Sincronizados:** Fluidez de refresco sincronizada por haz de escaneo con audio de bajísima latencia vía WASAPI.
+* **🌍 Modo 7 Panorámico:** Renderizado fluido y en alta resolución para el mapamundi del supramundo y el inframundo.
 
 ---
 
@@ -42,13 +41,15 @@ Port nativo para Windows 64-bit de la obra maestra de Super Nintendo **Terranigm
 
 ## 🚀 Cómo Jugar
 
-1. Coloca tu archivo `Terranigma (ESP).sfc` en la carpeta raíz del proyecto o junto al ejecutable.
-2. Inicia el juego con el perfil que prefieras:
-   * **`JUGAR.bat`** o **`LAUNCHER.bat`**: Menú gráfico de inicio (recomp-ui) para seleccionar y configurar mandos, resolución, aspecto de video, shaders y pulsar JUGAR.
-   * **`JUGAR_16_9.bat`**: Abre la pantalla de configuración con perfil panorámico 16:9 y shader HD-2D preestablecido.
-   * **`JUGAR_SIN_VENTANAS.vbs`**: Ejecución directa silenciosa sin consola de comandos CMD.
-   * **`JUGAR_4_3.bat`**: Modo clásico original 4:3 pixel-perfect con barras laterales.
-   * **`JUGAR_HACK_16_9.bat`**: Modo panorámico con campo de visión (FOV) extendido.
+1. Coloca tu archivo `Terranigma (ESP).sfc` en la misma carpeta del ejecutable.
+2. Ejecuta directamente **`TerranigmaSNESRecomp.exe`** (o **`JUGAR_TERRANIGMA.bat`**):
+   * Se abrirá automáticamente la pantalla de bienvenida y configuración (**Launcher GUI**).
+   * En la sección **DISPLAY**, pulsa en **Modo de Pantalla** para alternar entre:
+     - `4:3 (Original Clásico)`
+     - `16:9 Panorámico (Hack FOV)`
+     - `16:9 Pantalla Completa (Estirado)`
+   * Configura tus mandos o teclado, activa o cambia shaders a tu gusto y pulsa **JUGAR**.
+   * El ejecutable guardará tus preferencias para las siguientes sesiones.
 
 ---
 
@@ -92,10 +93,10 @@ cmake --build build --config Release
 
 ### Atajos de Teclado
 * **Alt + Enter:** Pantalla completa / Modo ventana
-* **F12:** Rebobinar partida
+* **F12:** Rebobinar partida en tiempo real
 * **Shift + F1 a F10:** Guardado rápido (ranuras 1 a 10)
 * **F1 a F10:** Carga rápida (ranuras 1 a 10)
-* **Tab:** Acelerar / Turbo
+* **Tab:** Acelerar / Modo Turbo
 * **P:** Pausa congelada
 * **F:** Mostrar estadísticas de rendimiento y FPS
 
