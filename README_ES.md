@@ -64,8 +64,8 @@ Port nativo para Windows 64-bit de la obra maestra de Super Nintendo **Terranigm
 ### Pasos de compilación
 
 ```cmd
-git clone --recursive https://github.com/tu-usuario/Terranigma-Recomp.git
-cd Terranigma-Recomp
+git clone --recursive https://github.com/aitorcachero/ark-Recomp.git
+cd ark-Recomp
 COMPILAR.bat
 ```
 
