@@ -32,7 +32,8 @@ extern uint8 g_ram[0x20000];
 static const char *const kTerranigmaAspectLabels[] = {
     "4:3 (Original Cl\xc3\xa1sico)",
     "16:9 Panor\xc3\xa1mico (Hack FOV)",
-    "16:9 Pantalla Completa (Estirado)",
+    "16:10 Panor\xc3\xa1mico (Steam Deck)",
+    "Pantalla Completa (Estirado)",
 };
 
 static void TerranigmaPrepareFrame(int dw, int dh, int *w, int *h)
@@ -40,6 +41,8 @@ static void TerranigmaPrepareFrame(int dw, int dh, int *w, int *h)
     (void)dw; (void)dh;
     if (g_config.display_aspect == 1) {
         *w = 384; /* 16:9 widescreen canvas: 256 + 2 * 64 */
+    } else if (g_config.display_aspect == 2) {
+        *w = 352; /* 16:10 widescreen canvas: 256 + 2 * 48 (Steam Deck 1280x800) */
     } else {
         *w = 256;
     }
@@ -57,8 +60,11 @@ static void TerranigmaComputeViewport(int frame_w, int frame_h, int drawable_w, 
     } else if (g_config.display_aspect == 1) {
         /* 16:9 Panorámico con lienzo extendido a resolución nativa */
         *viewport = SnesDisplayAspect_FitViewport(16.0 / 9.0, drawable_w, drawable_h);
+    } else if (g_config.display_aspect == 2) {
+        /* 16:10 Panorámico nativo para Steam Deck (1280x800) y pantallas 16:10 */
+        *viewport = SnesDisplayAspect_FitViewport(16.0 / 10.0, drawable_w, drawable_h);
     } else {
-        /* 16:9 Pantalla Completa estirada sin franjas */
+        /* Pantalla Completa estirada sin franjas */
         viewport->x = 0;
         viewport->y = 0;
         viewport->width = drawable_w > 0 ? drawable_w : 1;
@@ -72,16 +78,14 @@ static void TerranigmaBeginFrame(unsigned number)
     if (!g_ppu) return;
     PpuSetPal(g_ppu, true);
 
-    /* If mode is 4:3 or 16:9 Stretched, disable extra wide PPU rasterization */
-    if (g_config.display_aspect != 1 && !g_config.widescreen) {
+    /* If mode is 4:3 or Stretched, disable extra wide PPU rasterization */
+    if (g_config.display_aspect != 1 && g_config.display_aspect != 2 && !g_config.widescreen) {
         PpuSetExtraSpace(g_ppu, 0);
         return;
     }
 
-    /* Start each widescreen frame with a clean 64px centering budget.
-     * Screens with no wide background (menus, static rooms, dialogue)
-     * remain at extraLeftCur=0, extraRightCur=0 -> pure black pillarboxes. */
-    PpuSetExtraSpaceCentered(g_ppu, 64);
+    int budget = (g_config.display_aspect == 2) ? 48 : 64;
+    PpuSetExtraSpaceCentered(g_ppu, budget);
 
     uint16_t map_id = (uint16_t)(g_ram[0x047E] | (g_ram[0x047F] << 8));
     uint16_t camX   = (uint16_t)(g_ram[0x081E] | (g_ram[0x081F] << 8));
@@ -103,7 +107,7 @@ static void TerranigmaBeginFrame(unsigned number)
 
     /* Mode 7 world map (Overworld 0x0002, Underworld 0x0003) */
     if (PPU_mode(g_ppu) == 7) {
-        PpuSetExtraSpace(g_ppu, 64);
+        PpuSetExtraSpace(g_ppu, budget);
         return;
     }
 
@@ -117,7 +121,7 @@ static void TerranigmaBeginFrame(unsigned number)
 
     /* Mode 1 exploration in large towns, rooms and dungeons:
      * Clamp camera margins to prevent rendering beyond map boundaries */
-    int budget = 64;
+    /* budget already defined */
     int extraLeft = budget;
     int extraRight = budget;
 
@@ -151,8 +155,8 @@ static void TerranigmaBeginFrame(unsigned number)
         WsShadowSetRejectEastEcho(l, true);
     }
     WsShadowFrame(g_ppu);
-    WsShadowExtendEdges(0, 64);
-    WsShadowExtendEdges(1, 64);
+    WsShadowExtendEdges(0, budget);
+    WsShadowExtendEdges(1, budget);
 }
 
 static const SnesDesktopHostGame kGameHost = {
@@ -174,9 +178,9 @@ static const SnesDesktopHostGame kGameHost = {
     .display_aspect_supported = 1,
     .shader_supported    = 1,
     .aspect_labels       = kTerranigmaAspectLabels,
-    .num_aspect_labels   = 3,
+    .num_aspect_labels   = 4,
     .aspect_setting_label = "Modo de Pantalla",
-    .aspect_setting_help  = "4:3 clasico original, 16:9 Panoramico (Hack FOV) o 16:9 Pantalla Completa estirada.",
+    .aspect_setting_help  = "4:3 clasico original, 16:9 Panoramico, 16:10 Steam Deck o Pantalla Completa estirada.",
     .prepare_frame       = TerranigmaPrepareFrame,
     .begin_sim_frame     = TerranigmaBeginFrame,
     .compute_viewport    = TerranigmaComputeViewport,

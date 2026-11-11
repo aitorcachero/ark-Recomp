@@ -1,9 +1,12 @@
 @echo off
-cd /d "%~dp0build\Release"
-if not exist "TerranigmaSNESRecomp.exe" (
-    echo No se encuentra TerranigmaSNESRecomp.exe. Ejecuta primero COMPILAR.bat.
+setlocal
+cd /d "%~dp0"
+if exist "build\Release\TerranigmaSNESRecomp.exe" (
+    start "" "build\Release\TerranigmaSNESRecomp.exe" --launcher
+) else if exist "TerranigmaSNESRecomp.exe" (
+    start "" "TerranigmaSNESRecomp.exe" --launcher
+) else (
+    echo No se encontro TerranigmaSNESRecomp.exe. Ejecuta primero COMPILAR.bat.
     pause
-    exit /b 1
 )
-start "" "TerranigmaSNESRecomp.exe" --launcher
-exit /b
+exit /b 0
